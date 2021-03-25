@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Найди клад!</title>
+    <style>
+      .container {
+        position: relative;
+      }
+      #target {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        top: 0px;
+        left: 0px;
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="heading">Найди клад!</h1>
+
+    <div class="container">
+      <img
+        id="map"
+        width="400"
+        height="400"
+        src="http://nostarch.com/images/treasuremap.png"
+      />
+      <div id="target"></div>
+    </div>
+
+    <p id="distance"></p>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+      // Получить случайное число от 0 до size-1
+      var getRandomNumber = function (size) {
+        return Math.floor(Math.random() * size)
+      }
+
+      // Вычисляем расстояние от клика (event) до клада (target)
+      var getDistance = function (event, target) {
+        const diffX = event.x - target.x
+        const diffY = event.y - target.y
+        return Math.sqrt(diffX * diffX + diffY * diffY)
+      }
+
+      // Получить для расстояния строку подсказки
+      var getDistanceHint = function (distance) {
+        if (distance < 10) {
+          return 'Обожжешься!'
+        } else if (distance < 20) {
+          return 'Горячо'
+        } else if (distance < 40) {
+          return 'Тепло'
+        } else if (distance < 80) {
+          return 'Холодно'
+        } else if (distance < 160) {
+          return 'Очень холодно'
+        } else if (distance < 320) {
+          return 'Пиздец холодно'
+        } else {
+          return 'Замерзнешь!'
+        }
+      }
+      // Создаем переменные
+      var width = 400
+      var height = 400
+      var clicks = 0
+
+      // Случайная позиция клада
+      var target = {
+        x: getRandomNumber(width),
+        y: getRandomNumber(height),
+      }
+      console.log('target', target);
+      $("#target").css({ top: (target.y - 4)+'px', left: (target.x - 4)+'px' });
+      setTimeout(function() {
+        $("#target").hide();
+      }, 4000)
+
+      // Добавляем элементу img обработчик клика
+      $('#map').click(function (event) {
+        clicks++
+
+        // Получаем расстояние от места клика до клада
+        myClick = {x:event.offsetX, y:event.offsetY}
+        var distance = getDistance(myClick, target)
+
+        // Преобразуем расстояние в подсказку
+        var distanceHint = getDistanceHint(distance)
+
+        // Записываем в элемент #distance новую подсказку
+        $('#distance').text(distanceHint)
+
+        // Если клик был достаточно близко, поздравляем с попедой
+        if (distance < 8) {
+          alert('Клад найден! Сделано кликов: ' + clicks)
+        }
+      })
+    </script>
+  </body>
+</html>
