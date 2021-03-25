@@ -23,14 +23,15 @@
     <div class="container">
       <img
         id="map"
-        width="400"
-        height="400"
+        width="800"
+        height="600"
         src="http://nostarch.com/images/treasuremap.png"
       />
       <div id="target"></div>
     </div>
 
     <p id="distance"></p>
+    <p id="tries"></p>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -57,36 +58,45 @@
           return 'Тепло'
         } else if (distance < 80) {
           return 'Холодно'
-        } else if (distance < 160) {
+        } else if (distance < 120) {
           return 'Очень холодно'
-        } else if (distance < 320) {
+        } else if (distance < 200) {
+          return 'Очень-очень холодно'
+        } else if (distance < 340) {
           return 'Пиздец холодно'
+        } else if (distance < 460) {
+          return 'Пиздец-пиздец холодно'
+        } else if (distance < 600) {
+          return 'Сейчас замерзнешь'
+        } else if (distance < 800) {
+          return 'Замерз!'
         } else {
-          return 'Замерзнешь!'
+          return 'Умер!'
         }
       }
       // Создаем переменные
-      var width = 400
-      var height = 400
+      var width = 800
+      var height = 600
       var clicks = 0
+      var maxClicks = 10
 
       // Случайная позиция клада
       var target = {
         x: getRandomNumber(width),
         y: getRandomNumber(height),
       }
-      console.log('target', target);
-      $("#target").css({ top: (target.y - 4)+'px', left: (target.x - 4)+'px' });
-      setTimeout(function() {
-        $("#target").hide();
+      console.log('target', target)
+      $('#target').css({ top: target.y - 4 + 'px', left: target.x - 4 + 'px' })
+      setTimeout(function () {
+        $('#target').hide()
       }, 4000)
 
       // Добавляем элементу img обработчик клика
       $('#map').click(function (event) {
         clicks++
-
+        var leftTries = maxClicks - clicks
         // Получаем расстояние от места клика до клада
-        myClick = {x:event.offsetX, y:event.offsetY}
+        var myClick = { x: event.offsetX, y: event.offsetY }
         var distance = getDistance(myClick, target)
 
         // Преобразуем расстояние в подсказку
@@ -94,10 +104,15 @@
 
         // Записываем в элемент #distance новую подсказку
         $('#distance').text(distanceHint)
+        $('#tries').text('Осталось попыток: ' + leftTries)
 
         // Если клик был достаточно близко, поздравляем с попедой
         if (distance < 8) {
           alert('Клад найден! Сделано кликов: ' + clicks)
+        }
+        console.log(clicks, maxClicks)
+        if (clicks > maxClicks) {
+          alert('Конец игры!')
         }
       })
     </script>
